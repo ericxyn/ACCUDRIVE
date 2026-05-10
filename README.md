@@ -4,7 +4,7 @@ LemLib Python is an early Python recreation of [LemLib](https://github.com/LemLi
 
 This repository is intentionally hardware-agnostic. It exposes the math and control surfaces in Python and lets robot projects provide motor/sensor adapters. That makes it useful for simulation, teaching, testing autonomous routines, and porting LemLib-style snippets before wiring them to a Python robotics runtime.
 
-## What is included
+## Included Functions
 
 - `PID`, `ControllerSettings`, and exit-condition helpers
 - `Pose`, `Vector2D`, angle math, slew limiting, desaturation, and tangent-arc curvature
@@ -14,13 +14,13 @@ This repository is intentionally hardware-agnostic. It exposes the math and cont
 - LemLib path parsing plus Python conversion for path.jerryio exports
 - A docs-style website with all eight original tutorial topics adapted to Python
 
-## Install locally
+## Local Installation
 
 ```bash
 python -m pip install -e .
 ```
 
-## Quick example
+## Example Usage
 
 ```python
 from lemlib import Chassis, ControllerSettings, Drivetrain, OdomSensors, Pose
@@ -36,7 +36,7 @@ signal = chassis.move_to_point(0, 48)
 print(signal.left, signal.right)
 ```
 
-## Convert a path.jerryio LemLib path
+## Convertion of path.jerryio LemLib format to Lemlib Python path
 
 ```python
 from lemlib.paths import convert_lemlib_to_python
