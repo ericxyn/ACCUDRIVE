@@ -807,15 +807,6 @@ function App() {
                   >
                     {page.title}
                   </button>
-                  {page.id === "api" && activeId === "api" && (
-                    <ApiSidebarTree
-                      sections={apiSections}
-                      activeApiId={activeApiId}
-                      expandedGroups={expandedApiGroups}
-                      onToggleGroup={toggleApiGroup}
-                      onOpenEntry={openApiEntry}
-                    />
-                  )}
                 </React.Fragment>
               ))}
             </section>
@@ -835,31 +826,46 @@ function App() {
         </article>
       </main>
       <aside className="toc liquidGL">
-        <p>On this page</p>
-        {(active.blocks || [])
-          .filter((block) => block.type === "h")
-          .map((block) => (
-            <a
-              key={block.text}
-              href={`#${slug(block.text)}`}
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection(slug(block.text));
-              }}
-            >
-              {block.text}
-            </a>
-          ))}
-        {active.converter && (
-          <a
-            href="#converter"
-            onClick={(event) => {
-              event.preventDefault();
-              scrollToSection("converter");
-            }}
-          >
-            Converter
-          </a>
+        {active.id === "api" ? (
+          <>
+            <p>API Reference</p>
+            <ApiSidebarTree
+              sections={apiSections}
+              activeApiId={activeApiId}
+              expandedGroups={expandedApiGroups}
+              onToggleGroup={toggleApiGroup}
+              onOpenEntry={openApiEntry}
+            />
+          </>
+        ) : (
+          <>
+            <p>On this page</p>
+            {(active.blocks || [])
+              .filter((block) => block.type === "h")
+              .map((block) => (
+                <a
+                  key={block.text}
+                  href={`#${slug(block.text)}`}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    scrollToSection(slug(block.text));
+                  }}
+                >
+                  {block.text}
+                </a>
+              ))}
+            {active.converter && (
+              <a
+                href="#converter"
+                onClick={(event) => {
+                  event.preventDefault();
+                  scrollToSection("converter");
+                }}
+              >
+                Converter
+              </a>
+            )}
+          </>
         )}
       </aside>
     </div>

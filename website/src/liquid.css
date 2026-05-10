@@ -254,6 +254,12 @@ html[data-theme="dark"] .icon-button {
   margin-left: 0.55rem;
 }
 
+.toc .api-sidebar-tree {
+  border-left: 0;
+  margin-left: 0;
+  padding-left: 0;
+}
+
 .api-sidebar-group .api-sidebar-topic {
   background: transparent;
   box-shadow: none;
@@ -265,15 +271,34 @@ html[data-theme="dark"] .icon-button {
   background: rgba(255, 255, 255, 0.28);
 }
 
+.toc .api-sidebar-group {
+  margin-bottom: 0.72rem;
+}
+
+.toc .api-sidebar-group .api-sidebar-topic {
+  font-size: 0.76rem;
+  padding: 0.34rem 0.15rem;
+}
+
 .api-sidebar-topic svg {
   color: var(--accent-strong);
   flex: 0 0 auto;
+}
+
+.toc .api-sidebar-children {
+  margin-left: 0.35rem;
+  padding-left: 0.55rem;
 }
 
 .api-sidebar-children button {
   background: transparent;
   color: var(--ink-soft);
   font-weight: 600;
+}
+
+.toc .api-sidebar-children button {
+  font-size: 0.82rem;
+  padding: 0.38rem 0.45rem;
 }
 
 .api-sidebar-children button:hover,
