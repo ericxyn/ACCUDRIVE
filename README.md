@@ -62,9 +62,9 @@ npm install
 npm run dev
 ```
 
-It has an API Reference and Tutorial Website with documentation structure that is intuitive and easy to read. The site includes all 8 tutorial pages that LemLib features, and adds a browser-based LemLib path converter.
+It has an API reference with an intuitive documentation structure, all eight LemLib tutorial topics adapted to Python, and a browser-based LemLib path converter.
 
 ## Attribution
 
-This project is a Python port inspired by LemLib but completely independent of it. Many functions of LemLib can be found in ACCUDRIVE as a python counterpart, however these were developed separately. See `NOTICE.md` and `LICENSE`.
+This project is a Python port inspired by LemLib but completely independent of it. Many LemLib concepts have ACCUDRIVE Python counterparts, but they were developed separately. See `NOTICE.md` and `LICENSE`.
 

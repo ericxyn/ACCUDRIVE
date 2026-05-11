@@ -24,7 +24,7 @@ const pages = [
       logoBlock(),
       p("Welcome to the documentation for ACCUDRIVE. This site contains everything you need to use or contribute to the Python recreation of LemLib."),
       p("If you are new, start with the introductory tutorials. If you already know what you are doing, jump to the API reference or the LemLib path converter."),
-      callout("note", "Port status", "This is an initial hardware-agnostic Python port. The math, path format, and control surfaces are available now; real robot projects should provide motor and sensor adapters for their runtime."),
+      callout("note", "Port Status", "This is an initial hardware-agnostic Python port. The math, path format, and control surfaces are available now; real robot projects should provide motor and sensor adapters for their runtime."),
       code(`from accudrive import chassis, controller_settings, drivetrain, odom_sensors, pose
 
 drive = drivetrain(track_width=10, wheel_diameter=4, rpm=360)
@@ -42,7 +42,7 @@ print(robot.move_to_point(0, 48))`, "python"),
     group: "Home",
     blocks: [
       p("ACCUDRIVE brings LemLib's autonomous-motion ideas into Python for simulation, education, and Python robotics runtimes."),
-      p("The project keeps LemLib's familiar concepts: poses, drivetrain settings, pid controllers, odometry sensors, driver-control curves, angular motions, lateral motions, pure pursuit, and motion chaining."),
+      p("The project keeps LemLib's familiar concepts: poses, drivetrain settings, PID controllers, odometry sensors, driver-control curves, angular motions, lateral motions, pure pursuit, and motion chaining."),
       p("The package does not assume one hardware platform. Motor groups can be plain callables or objects with move and brake methods, which keeps the core easy to test."),
     ],
   },
@@ -85,23 +85,23 @@ npm run dev`, "bash"),
     code(`python -m venv .venv
 .venv\\Scripts\\activate
 python -m pip install -e .`, "bash"),
-    h("First import"),
+    h("First Import"),
     p("The Python package uses lower_snake_case for public functions and variables."),
     code(`from accudrive import chassis, controller_settings, drivetrain, odom_sensors, pose`, "python"),
-    h("Project shape"),
+    h("Project Shape"),
     p("A normal project has a robot configuration module, an autonomous module, and optional path files exported from path.jerryio."),
     code(`robot/
   config.py
   autonomous.py
   paths/
     skills.txt`, "text"),
-    h("Next step"),
-    p("Once the package imports, configure your drivetrain, sensors, and pid settings."),
+    h("Next Step"),
+    p("Once the package imports, configure your drivetrain, sensors, and PID settings."),
   ]),
   tutorial("2 - Configuration", "2_configuration", [
     h("Introduction"),
-    p("Configuration tells ACCUDRIVE what your drivetrain looks like, what sensor sources exist, and which pid settings to use."),
-    h("Motor adapters"),
+    p("Configuration tells ACCUDRIVE what your drivetrain looks like, what sensor sources exist, and which PID settings to use."),
+    h("Motor Adapters"),
     p("Motor groups can be callables or objects with move and brake methods. This lets the same control code run in tests, simulators, or a robot runtime."),
     code(`class MotorGroup:
     def __init__(self, name):
@@ -127,7 +127,7 @@ drive = drivetrain(
     rpm=360,
     horizontal_drift=2,
 )`, "python"),
-    h("Odometry sensors"),
+    h("Odometry Sensors"),
     p("Use odom_sensors to keep the same shape as LemLib. The initial port does not require real hardware objects; pass adapters when your runtime has them."),
     code(`from accudrive import odom_sensors
 
@@ -138,7 +138,7 @@ sensors = odom_sensors(
     horizontal_2=None,
     imu=None,
 )`, "python"),
-    h("pid settings"),
+    h("PID Settings"),
     code(`from accudrive import controller_settings
 
 lateral_controller = controller_settings(10, 0, 3, 3, 1, 100, 3, 500, 20)
@@ -153,17 +153,17 @@ print(robot.get_pose())`, "python"),
   tutorial("3 - Driver Control", "3_driver_control", [
     h("Introduction"),
     p("Driver control maps joystick values to left and right drivetrain outputs. Inputs normally range from -127 to 127."),
-    h("Tank drive"),
+    h("Tank Drive"),
     code(`def driver_loop(left_y, right_y):
     robot.tank(left_y, right_y)`, "python"),
-    h("Arcade drive"),
+    h("Arcade Drive"),
     code(`def driver_loop(left_y, right_x):
     robot.arcade(left_y, right_x)`, "python"),
-    h("Curvature drive"),
+    h("Curvature Drive"),
     p("Curvature drive uses throttle and a turn curve. It behaves like an arc at speed and feels smoother than simple arcade for many drivers."),
     code(`def driver_loop(left_y, right_x):
     robot.curvature(left_y, right_x)`, "python"),
-    h("Input scaling"),
+    h("Input Scaling"),
     p("expo_drive_curve makes small joystick movements softer while preserving full output near the end of travel."),
     code(`from accudrive import expo_drive_curve
 
@@ -172,10 +172,10 @@ steer_curve = expo_drive_curve(deadband=3, minimum_output=10, curve_gain=1.019)
 
 robot = chassis(drive, lateral_controller, angular_controller, sensors, throttle_curve, steer_curve)`, "python"),
   ]),
-  tutorial("4 - pid tuning", "4_pid_tuning", [
+  tutorial("4 - PID Tuning", "4_pid_tuning", [
     h("Introduction"),
-    p("ACCUDRIVE uses one lateral pid and one angular pid. The tuning order is the same as LemLib: start with kp and kd, add ki only when needed, then tune slew and exit conditions."),
-    h("angular pid"),
+    p("ACCUDRIVE uses one lateral PID and one angular PID. The tuning order is the same as LemLib: start with proportional and derivative gains, add integral gain only when needed, then tune slew and exit conditions."),
+    h("Angular PID"),
     code(`angular_controller = controller_settings(
     2,  # kp
     0,  # ki
@@ -185,59 +185,59 @@ robot = chassis(drive, lateral_controller, angular_controller, sensors, throttle
     3, 500,
     0,
 )`, "python"),
-    p("Test angular tuning with a heading step. Increase kp until the turn reaches the target quickly, then increase kd until oscillation is controlled."),
+    p("Test angular tuning with a heading step. Increase the proportional gain until the turn reaches the target quickly, then increase the derivative gain until oscillation is controlled."),
     code(`robot.set_pose(pose(0, 0, 0))
 signal = robot.turn_to_heading(90)
 print(signal)`, "python"),
-    h("lateral pid"),
+    h("Lateral PID"),
     code(`lateral_controller = controller_settings(10, 0, 3, 3, 1, 100, 3, 500, 20)
 robot.set_pose(pose(0, 0, 0))
 print(robot.move_to_point(0, 48))`, "python"),
-    h("ki and windup"),
-    p("Use ki only for steady-state error that kp and kd cannot reasonably remove. Keep a windup range so the integral only accumulates near the target."),
+    h("Integral Gain and Windup"),
+    p("Use integral gain only for steady-state error that proportional and derivative gains cannot reasonably remove. Keep a windup range so the integral only accumulates near the target."),
     h("Slew"),
     p("Slew limits acceleration. It is helpful when a simulated or physical drivetrain slips, tips, or saturates too aggressively."),
-    h("Exit conditions"),
+    h("Exit Conditions"),
     p("controller_settings stores small and large error windows with timeouts. Those values are available to motion code and tests through exit_condition.from_settings."),
   ]),
   tutorial("5 - Angular Motions", "5_angular_motion", [
-    h("Turn to heading"),
+    h("Turn to Heading"),
     p("turn_to_heading rotates the robot to an absolute field heading."),
     code(`robot.set_pose(pose(0, 0, 0))
 robot.turn_to_heading(270)`, "python"),
-    h("Turn to point"),
+    h("Turn to Point"),
     p("turn_to_point calculates the heading from the current pose to a field coordinate."),
     code(`robot.turn_to_point(53, 53)`, "python"),
-    h("Swing to heading"),
+    h("Swing to Heading"),
     p("Swing turns lock one side of the drivetrain and move the other side."),
     code(`robot.swing_to_heading(45)`, "python"),
-    h("Swing to point"),
+    h("Swing to Point"),
     code(`robot.swing_to_point(53, 53)`, "python"),
   ]),
   tutorial("6 - Lateral Motion", "6_lateral_motion", [
-    h("Move to point"),
+    h("Move to Point"),
     p("move_to_point drives to an x/y coordinate while turning toward the target point."),
     code(`robot.move_to_point(10, 10)`, "python"),
-    h("Backwards movement"),
+    h("Backward Movement"),
     code(`from accudrive import move_to_point_params
 
 robot.move_to_point(20, 15, params=move_to_point_params(forwards=False))`, "python"),
-    h("Move to pose"),
+    h("Move to Pose"),
     p("move_to_pose uses a boomerang-style carrot point so the chassis can finish with a chosen heading."),
     code(`robot.move_to_pose(10, 10, 90)`, "python"),
-    h("Lead and horizontal drift"),
+    h("Lead and Horizontal Drift"),
     code(`from accudrive import move_to_pose_params
 
 params = move_to_pose_params(lead=0.3, horizontal_drift=8)
 robot.move_to_pose(0, 0, 0, params=params)`, "python"),
   ]),
   tutorial("7 - Pure Pursuit", "7_pure_pursuit", [
-    h("What is pure pursuit?"),
+    h("What Is Pure Pursuit?"),
     p("Pure pursuit follows a path by selecting a lookahead point ahead of the robot and driving toward the arc that reaches it."),
-    h("Creating paths"),
+    h("Creating Paths"),
     p("Use path.jerryio.com and export the original LemLib v0.5 format. It is a text file with one waypoint per line: x, y, speed, followed by endData."),
     code(samplePath, "text"),
-    h("Load and follow"),
+    h("Load and Follow"),
     code(`from pathlib import Path as file_path
 from accudrive import parse_lemlib_path
 
@@ -249,17 +249,17 @@ robot.follow(auton_path, lookahead_distance=15)`, "python"),
   tutorial("8 - Motion Chaining", "8_motion_chaining", [
     h("Introduction"),
     p("Motion chaining keeps the robot moving between commands. In Python, use minimum speeds, early-exit ranges, and explicit cancellation when a custom condition has been met."),
-    h("Minimum speed"),
+    h("Minimum Speed"),
     code(`from accudrive import move_to_point_params, move_to_pose_params, swing_params
 
 first_leg = move_to_pose_params(min_lateral_speed=72, early_exit_range=8)
 robot.move_to_pose(48, -24, 90, params=first_leg)
 robot.move_to_pose(64, 3, 0)`, "python"),
-    h("Motion cancellation"),
+    h("Motion Cancellation"),
     code(`signal = robot.move_to_point(0, 24, params=move_to_point_params(min_lateral_speed=48))
 if ball_detected():
     robot.cancel_motion()`, "python"),
-    h("Turning into a chain"),
+    h("Turning Into a Chain"),
     code(`turn = swing_params(min_speed=127, early_exit_range=20)
 robot.swing_to_heading(90, params=turn)
 robot.move_to_pose(120, 10, 0)`, "python"),
@@ -329,7 +329,7 @@ function apiReferenceBlocks() {
     p("This reference mirrors LemLib's API layout while documenting the Python package surface. Public functions and variables use lower_snake_case names."),
     apiIndex([
       {
-        title: "main api",
+        title: "Main API",
         items: [
           "chassis",
           "set_pose",
@@ -351,7 +351,7 @@ function apiReferenceBlocks() {
         ],
       },
       {
-        title: "parameters and data",
+        title: "Parameters and Data",
         items: [
           "drive_signal",
           "turn_to_heading_params",
@@ -370,15 +370,15 @@ function apiReferenceBlocks() {
         ],
       },
       {
-        title: "odometry and geometry",
+        title: "Odometry and Geometry",
         items: ["vector_2d", "pose", "tracking_wheel", "tracking_wheel_odometry"],
       },
       {
-        title: "paths",
+        title: "Paths",
         items: ["waypoint", "path", "parse_lemlib_path", "convert_lemlib_to_accudrive"],
       },
       {
-        title: "pid and utils",
+        title: "PID and Utils",
         items: [
           "gains",
           "pid",
@@ -400,8 +400,8 @@ function apiReferenceBlocks() {
     ]),
     apiEntry("chassis", "chassis(drivetrain, lateral_settings, angular_settings, sensors=None, throttle_curve=None, steer_curve=None, pose=None)", "Hardware-agnostic tank-drive facade for driver control, pose storage, and autonomous motion calculations.", [
       param("drivetrain", "drivetrain", "required", "drivetrain geometry and motor adapters."),
-      param("lateral_settings", "controller_settings", "required", "pid and exit settings for forward/backward motion."),
-      param("angular_settings", "controller_settings", "required", "pid and exit settings for turns."),
+      param("lateral_settings", "controller_settings", "required", "PID and exit settings for forward/backward motion."),
+      param("angular_settings", "controller_settings", "required", "PID and exit settings for turns."),
       param("sensors", "odom_sensors | none", "none", "Optional tracking-wheel and IMU adapters."),
       param("throttle_curve", "drive_curve | none", "none", "Optional driver throttle shaping curve."),
       param("steer_curve", "drive_curve | none", "none", "Optional driver steering shaping curve."),
@@ -446,7 +446,7 @@ function apiReferenceBlocks() {
     apiEntry("parse_lemlib_path", "parse_lemlib_path(text)", "Parses path.jerryio's LemLib v0.5 text export.", [param("text", "str", "required", "Text containing x, y, speed lines ending at endData.")], "path"),
     apiEntry("convert_lemlib_to_accudrive", "convert_lemlib_to_accudrive(text, variable_name='path')", "Converts LemLib path text into ACCUDRIVE path and waypoint code.", [param("text", "str", "required", "LemLib path export text."), param("variable_name", "str", "'path'", "Python variable name for the generated code.")], "str"),
     apiEntry("gains", "gains(kp=0.0, ki=0.0, kd=0.0)", "PID gain container.", [param("kp", "float", "0.0", "Proportional gain."), param("ki", "float", "0.0", "Integral gain."), param("kd", "float", "0.0", "Derivative gain.")], "data object"),
-    apiEntry("pid", "pid(kp, ki=0.0, kd=0.0, windup_range=0.0, sign_flip_reset=False)", "pid controller compatible with LemLib's control style.", [param("kp", "float | gains", "required", "Proportional gain or a gains object."), param("ki", "float", "0.0", "Integral gain."), param("kd", "float", "0.0", "Derivative gain."), param("windup_range", "float", "0.0", "Error range where integral is allowed to accumulate."), param("sign_flip_reset", "bool", "false", "Reset integral when error changes sign.")], "pid object"),
+    apiEntry("pid", "pid(kp, ki=0.0, kd=0.0, windup_range=0.0, sign_flip_reset=False)", "PID controller compatible with LemLib's control style.", [param("kp", "float | gains", "required", "Proportional gain or a gains object."), param("ki", "float", "0.0", "Integral gain."), param("kd", "float", "0.0", "Derivative gain."), param("windup_range", "float", "0.0", "Error range where integral is allowed to accumulate."), param("sign_flip_reset", "bool", "false", "Reset integral when error changes sign.")], "PID object"),
     apiEntry("angular_direction", "angular_direction.cw_clockwise | angular_direction.ccw_counterclockwise", "Optional direction constraint for angle_error.", [], "enum"),
     apiEntry("slew_direction", "slew_direction.increasing | slew_direction.decreasing | slew_direction.all", "Optional direction constraint for slew.", [], "enum"),
     apiEntry("drive_outputs", "drive_outputs(left, right)", "Normalized left/right output pair returned by desaturate.", [param("left", "float", "required", "Left normalized output."), param("right", "float", "required", "Right normalized output.")], "data object"),
@@ -644,14 +644,14 @@ function App() {
         <button className="icon-button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle contents">
           <Menu size={18} />
         </button>
-        <span>ACCUDRIVE documentation</span>
+        <span>ACCUDRIVE Documentation</span>
       </header>
       <aside className={`sidebar liquidGL ${menuOpen ? "open" : ""}`}>
         <div className="brand" onClick={() => navigate("index")}>
           <img className="brand-mark" src={ACCUDRIVE_ICON} alt="" aria-hidden="true" />
           <div>
             <strong>ACCUDRIVE</strong>
-            <span>documentation</span>
+            <span>Documentation</span>
           </div>
         </div>
         <div className="side-actions" aria-label="Site actions">
@@ -795,7 +795,7 @@ function ApiReference({ activeApiId, onOpenEntry }) {
   return (
     <div className="api-reference">
       <p className="api-reference-intro">
-        This reference mirrors LemLib's API layout while documenting the Python package surface. Pick any function, parameter object, or data object to expand a full card with parameter detail.
+        This reference mirrors LemLib's API layout while documenting the Python package surface. Pick any function, parameter object, or data object to open a full card with detailed parameter information.
       </p>
       <section className="api-focus-card" id={slug(selected.name)} aria-live="polite">
         <div className="api-focus-header">
@@ -808,11 +808,11 @@ function ApiReference({ activeApiId, onOpenEntry }) {
         <pre className="api-signature"><code>{selected.signature}</code></pre>
         <div className="api-detail-grid">
           <section className="api-detail-summary">
-            <h3>what it does</h3>
+            <h3>What It Does</h3>
             <p>{selected.description}</p>
           </section>
           <section className="api-detail-params">
-            <h3>parameters</h3>
+            <h3>Parameters</h3>
             {selected.parameters.length > 0 ? (
               <div className="api-param-grid">
                 {selected.parameters.map((parameter) => (
@@ -822,7 +822,7 @@ function ApiReference({ activeApiId, onOpenEntry }) {
                       <span>{parameter.type}</span>
                     </div>
                     <p>{parameter.text}</p>
-                    <small>default: <code>{parameter.defaultValue}</code></small>
+                    <small>Default: <code>{parameter.defaultValue}</code></small>
                   </article>
                 ))}
               </div>
@@ -833,7 +833,7 @@ function ApiReference({ activeApiId, onOpenEntry }) {
         </div>
         {selected.notes.length > 0 && (
           <section className="api-detail-notes">
-            <h3>notes</h3>
+            <h3>Notes</h3>
             <ul>
               {selected.notes.map((note) => <li key={note}>{note}</li>)}
             </ul>
@@ -983,23 +983,23 @@ function Converter() {
     <section id="converter" className="converter">
       <p>Paste a path.jerryio LemLib v0.5 export and convert it into Python code for <code>path</code> and <code>waypoint</code>.</p>
       <label className="field-label">
-        Variable name
+        Variable Name
         <input value={name} onChange={(event) => setName(event.target.value || "path")} />
       </label>
       <div className="converter-grid">
         <label>
-          Original LemLib path
+          Original LemLib Path
           <textarea value={input} onChange={(event) => setInput(event.target.value)} spellCheck="false" />
         </label>
         <label>
-          ACCUDRIVE output
+          ACCUDRIVE Output
           <textarea value={output || error} readOnly spellCheck="false" className={error ? "error" : ""} />
         </label>
       </div>
       <div className="actions">
         <button onClick={() => setInput(samplePath)}>
           <FileCode2 size={16} />
-          Load sample
+          Load Sample
         </button>
         <button onClick={copy} disabled={!output}>
           <Clipboard size={16} />
