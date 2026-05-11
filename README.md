@@ -1,4 +1,4 @@
-# accudrive
+# ACCUDRIVE
 
 accudrive is an early Python recreation of [LemLib](https://github.com/LemLib/LemLib): PID, odometry math, tank-drive motion helpers, driver control curves, pure pursuit path utilities, and a path.jerryio LemLib-format converter.
 
